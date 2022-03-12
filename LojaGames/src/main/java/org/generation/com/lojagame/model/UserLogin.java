@@ -2,13 +2,18 @@ package org.generation.com.lojagame.model;
 
 public class UserLogin {
 	
-private String nome;
+	private String nome;
 	
 	private String usuario;
 	
 	private String senha;
 	
 	private String token;
+	
+	private String foto;
+	
+	private long id;
+	
 
 	public String getNome() {
 		return nome;
@@ -40,6 +45,23 @@ private String nome;
 
 	public void setToken(String token) {
 		this.token = token;
+			
+	}
+
+	public String getFoto() {
+		return foto;
+	}
+
+	public void setFoto(String foto) {
+		this.foto = foto;
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
 	}
 
 }

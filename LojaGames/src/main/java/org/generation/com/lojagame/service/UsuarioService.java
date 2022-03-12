@@ -3,6 +3,7 @@ import java.nio.charset.Charset;
 import java.util.Base64;
 import java.util.Optional;
 
+import org.generation.com.lojagame.model.UserLogin;
 import org.generation.com.lojagame.model.Usuario;
 import org.generation.com.lojagame.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +47,7 @@ public class UsuarioService {
 		throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado!", null);		
 	}	
 	
-	public Optional<UsuarioLogin> logarUsuario(Optional<UsuarioLogin> usuarioLogin) {
+	public Optional<UserLogin> logarUsuario(Optional<UserLogin> usuarioLogin) {
 		
 		Optional<Usuario> usuario = usuarioRepository.findByUsuario(usuarioLogin.get().getUsuario());
 
