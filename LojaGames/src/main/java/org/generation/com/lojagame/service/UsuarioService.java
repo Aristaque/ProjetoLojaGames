@@ -1,8 +1,9 @@
 package org.generation.com.lojagame.service;
+
 import java.nio.charset.Charset;
-import java.util.Base64;
 import java.util.Optional;
 
+import org.apache.commons.codec.binary.Base64;
 import org.generation.com.lojagame.model.UserLogin;
 import org.generation.com.lojagame.model.Usuario;
 import org.generation.com.lojagame.repository.UsuarioRepository;
@@ -10,8 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
-
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Service
 public class UsuarioService {
@@ -28,47 +28,47 @@ public class UsuarioService {
 
 		return Optional.of(usuarioRepository.save(usuario));
 	}
-	
+
 	public Optional<Usuario> atualizarUsuario(Usuario usuario) {
 
 		if (usuarioRepository.findById(usuario.getId()).isPresent()) {
 			Optional<Usuario> buscaUsuario = usuarioRepository.findByUsuario(usuario.getUsuario());
 
-			if (buscaUsuario.isPresent()) {				
+			if (buscaUsuario.isPresent()) {
 				if (buscaUsuario.get().getId() != usuario.getId())
 					throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuário já existe!", null);
 			}
-			
+
 			usuario.setSenha(criptografarSenha(usuario.getSenha()));
 
 			return Optional.of(usuarioRepository.save(usuario));
-		} 
-			
-		throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado!", null);		
-	}	
-	
+		}
+
+		throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado!", null);
+	}
+
 	public Optional<UserLogin> logarUsuario(Optional<UserLogin> usuarioLogin) {
-		
+
 		Optional<Usuario> usuario = usuarioRepository.findByUsuario(usuarioLogin.get().getUsuario());
 
 		if (usuario.isPresent()) {
 			if (compararSenhas(usuarioLogin.get().getSenha(), usuario.get().getSenha())) {
 
-				usuarioLogin.get().setId(usuario.get().getId());				
+				usuarioLogin.get().setId(usuario.get().getId());
 				usuarioLogin.get().setNome(usuario.get().getNome());
 				usuarioLogin.get().setFoto(usuario.get().getFoto());
-				usuarioLogin.get().setToken(gerarBasicToken(usuarioLogin.get().getUsuario(), usuarioLogin.get().getSenha()));
+				usuarioLogin.get()
+						.setToken(gerarBasicToken(usuarioLogin.get().getUsuario(), usuarioLogin.get().getSenha()));
 				usuarioLogin.get().setSenha(usuario.get().getSenha());
 
 				return usuarioLogin;
 
 			}
-		}		
-		
-		throw new ResponseStatusException(
-				HttpStatus.UNAUTHORIZED, "Usuário ou senha inválidos!", null);
+		}
+
+		throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuário ou senha inválidos!", null);
 	}
-	
+
 	private String criptografarSenha(String senha) {
 
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
@@ -76,13 +76,14 @@ public class UsuarioService {
 
 		return senhaEncoder;
 	}
-	
+
 	private boolean compararSenhas(String senhaDigitada, String senhaBanco) {
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-		
-		return encoder.matches(senhaDigitada, senhaBanco);		
+
+		return encoder.matches(senhaDigitada, senhaBanco);
 	}
-		private String gerarBasicToken(String email, String password) {
+
+	private String gerarBasicToken(String email, String password) {
 		String estrutura = email + ":" + password;
 		byte[] estruturaBase64 = Base64.encodeBase64(estrutura.getBytes(Charset.forName("US-ASCII")));
 		return "Basic " + new String(estruturaBase64);
