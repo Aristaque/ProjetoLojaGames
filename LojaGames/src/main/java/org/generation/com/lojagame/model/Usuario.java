@@ -43,7 +43,6 @@ public class Usuario {
 	public Usuario() {
 		super();
 	}
-
 	public long getId() {
 		return id;
 	}
@@ -51,7 +50,6 @@ public class Usuario {
 	public void setId(long id) {
 		this.id = id;
 	}
-
 	public String getNome() {
 		return nome;
 	}
@@ -75,7 +73,6 @@ public class Usuario {
 	public void setFoto(String foto) {
 		this.foto = foto;
 	}
-
 	public String getSenha() {
 		return senha;
 	}
